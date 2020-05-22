@@ -61,6 +61,7 @@
     "fix-js": "gulp fix-js"
   },
   "dependencies": {
+    "bootstrap": "^4.5.0",
     "include-media": "1.4.9",
     "jquery": "3.5.0",
     "normalize.css": "8.0.1",

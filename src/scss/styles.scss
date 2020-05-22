@@ -13,9 +13,11 @@
 
 //* Layout modules *//
 @import 'layout/main';
+@import 'layout/board';
 
 //* Pages modules *//
 @import 'pages/main';
 
 //* Components *//
 @import 'components/main';
+@import "components/board";

@@ -12,11 +12,7 @@ import boardGame from './modules/board-game';
     dots();
   });
 
-  $(() => {
+  if ($('#main-board')) {
     boardGame();
-  });
-  
-  // if ($('#main-board')) {
-  //   BoardGame();
-  // }
+  }
 })(jQuery);

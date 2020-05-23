@@ -3,5 +3,5 @@
 module.exports = [
   './node_modules/jquery/dist/jquery.min.js',
   './node_modules/acorn/dist/acorn.js',
-  './node_modules/paper/dist/paper'
+  './node_modules/paper/dist/paper-full.js'
 ];

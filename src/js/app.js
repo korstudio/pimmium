@@ -10,9 +10,12 @@ import boardGame from './modules/board-game';
   // When DOM is ready
   $(() => {
     dots();
+
+    console.log(paper);
+    if ($('#main-board')) {
+      boardGame(paper);
+    }
   });
 
-  if ($('#main-board')) {
-    boardGame();
-  }
+
 })(jQuery);

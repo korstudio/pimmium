@@ -5,17 +5,22 @@
 
 import dots from './modules/dots';
 import boardGame from './modules/board-game';
+import course from './modules/course-01';
 
-(($) => {
+(($, p) => {
   // When DOM is ready
   $(() => {
     dots();
+  });
 
-    console.log(paper);
-    if ($('#main-board')) {
-      boardGame(paper);
+  $(() => {
+    console.log(p);
+    if ($('#main-board')[0]) {
+      boardGame(p);
     }
   });
 
-
-})(jQuery);
+  $(() => {
+    course();
+  });
+})(jQuery, paper);

@@ -4,23 +4,30 @@
 // Feel free with using ES6 here.
 
 import dots from './modules/dots';
-import boardGame from './modules/board-game';
-import course from './modules/course-01';
+// import boardGame from './modules/board-game';
+// import course from './modules/course-01';
+import calcGrades from './modules/course-02';
 
-(($, p) => {
+(($) => {
   // When DOM is ready
   $(() => {
     dots();
   });
 
-  $(() => {
-    console.log(p);
-    if ($('#main-board')[0]) {
-      boardGame(p);
-    }
-  });
+  // $(() => {
+  //   console.log(p);
+  //   if ($('#main-board')[0]) {
+  //     boardGame(p);
+  //   }
+  // });
+  //
+  // $(() => {
+  //   course();
+  // });
 
   $(() => {
-    course();
+    $('#score-button').click(() => {
+      calcGrades($('#score-text')[0].value);
+    });
   });
-})(jQuery, paper);
+})(jQuery);

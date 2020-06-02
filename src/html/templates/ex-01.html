@@ -17,6 +17,10 @@
       text-align: center;
     }
 
+    table td.selected {
+      color: #3399ff;
+    }
+
     input {
       display: block;
       width: 200px;
@@ -26,6 +30,11 @@
 
     p {
       text-align: center;
+    }
+
+    p.small {
+      font-size: 14px;
+      color: #5f5b5b;
     }
 
     #result {
@@ -58,19 +67,19 @@
       <tr>
         <td>•</td>
         <td>•</td>
-        <td>•</td>
+        <td class="selected">•</td>
         <td>•</td>
       </tr>
       <tr>
         <td>•</td>
-        <td>•</td>
+        <td class="selected">•</td>
         <td><strong style="color: red">•</strong></td>
-        <td>•</td>
+        <td class="selected">•</td>
       </tr>
       <tr>
         <td>•</td>
         <td>•</td>
-        <td>•</td>
+        <td class="selected">•</td>
         <td>•</td>
       </tr>
     </table>
@@ -80,22 +89,20 @@
     <input type="text" id="input-x" placeholder="Enter X" value="2">
     <input type="text" id="input-y" placeholder="Enter Y" value="2">
     <button type="button" id="btn-submit">OK</button>
-    <p id="result">(1,2) (2,1) (2,3) (3,2)</p>
+    <hr>
+    <p class="small">(TOP), (LEFT), (RIGHT), (BOTTOM)</p>
+    <p id="result"></p>
   </section>
 </div>
 <script src="js/vendor.js"></script>
 
 <!-- main function -->
 <script>
-  const table = [
-    [1, 2, 3, 4],
-    [1, 2, 3, 4],
-    [1, 2, 3, 4],
-    [1, 2, 3, 4]
-  ];
-
   function getCoordinates(x, y) {
+    x = Number(x);
+    y = Number(y);
     let results = [];
+
     // starts here
     //
 
@@ -106,12 +113,19 @@
 <!-- page load -->
 <script>
   $(() => {
+    calculate();
+
     $('#btn-submit').click(() => {
-      const x = $('#input-x')[0].value;
-      const y = $('#input-y')[0].value;
-      getCoordinates(x, y);
+      calculate();
     });
-  })
+  });
+
+  function calculate() {
+    const x = $('#input-x')[0].value;
+    const y = $('#input-y')[0].value;
+    const coords = getCoordinates(x, y);
+    $('#result').html(prettify(coords));
+  }
 
   function prettify(array) {
     let final = [];

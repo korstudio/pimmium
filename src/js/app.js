@@ -27,7 +27,9 @@ import calcGrades from './modules/course-02';
 
   $(() => {
     $('#score-button').click(() => {
-      calcGrades($('#score-text')[0].value);
+      const score = $('#score-text')[0].value;
+      const result = calcGrades(score);
+      $('#grade-result').html(result);
     });
   });
 })(jQuery);

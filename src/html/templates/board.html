@@ -5,10 +5,21 @@
 
 <body>
   <section class="wrapper board">
-    @@include('../partials/components/board-body.html')
+    <main id="main-board">
+      <div class="game-assets">
+        <img id="bg-board" src="images/placeholder-640-square.jpg" alt="">
+      </div>
+      <div class="game-bg"></div>
+      <canvas id="board-canvas"></canvas>
+    </main>
   </section>
 
-  @@include('../partials/scripts/common.html')
+  <script src="js/vendor.js"></script>
+  <script type="text/paperscript" canvas="board-canvas">
+    const image = new Raster();
+    image.source = 'images/placeholder-640-square.jpg';
+    image.position = view.center;
+  </script>
 </body>
 
 </html>

@@ -103,10 +103,35 @@
   function getCoordinates(x, y) {
     x = Number(x);
     y = Number(y);
+
     let results = [];
 
-    // starts here
-    //
+    if (x < 0 || x >= 4 || y < 0 || y >= 4) {
+      return results;
+    }
+
+    const top = [x, y - 1];
+    const left = [x - 1, y];
+    const right = [x + 1, y];
+    const bottom = [x, y + 1];
+
+    if (top[1] >= 0) {
+      results.push(top);
+    }
+
+    if (left[0] >= 0) {
+      results.push(left);
+    }
+
+    if (right[0] < 4) {
+      results.push(right);
+    }
+
+    if (bottom[1] < 4) {
+      results.push(bottom);
+    }
+
+    console.log(results.length);
 
     return results;
   }

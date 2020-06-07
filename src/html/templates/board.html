@@ -7,7 +7,7 @@
   <section class="wrapper board">
     <main id="main-board">
       <div class="game-bg"></div>
-      <canvas id="board-canvas"></canvas>
+      <canvas id="board-canvas" width="900" height="900"></canvas>
     </main>
   </section>
 
@@ -20,6 +20,22 @@
     ];
 
     const selectedPattern = stonePatterns[1];
+
+    const maxRow = 9;
+    const maxCol = 9;
+
+    const size = 90;
+
+    let allCoords = [];
+
+    for (let row = 1; row <= 9; row++) {
+      for (let col = 1; col <= 9; col++) {
+        const a = row*size;
+        const b = col*size;
+        allCoords.push([b,a])
+      }
+    }
+    console.log(allCoords)
   </script>
   <script type="text/paperscript" canvas="board-canvas">
     let mover = 0;
@@ -28,13 +44,34 @@
     image.source = 'images/board-bg.png';
     image.position = view.center;
 
+    //test dots plotting
+    for(let i = 0; i < allCoords.length; i++) {
+      const coords = allCoords[i];
+      const circle = new Path.Circle({
+        center: new Point({ x:coords[0],y:coords[1] }),
+        radius: 44
+      });
+
+      circle.fillColor = '#d09929';
+
+    }
+
     function onMouseDown(event) {
 
     }
 
     function onMouseUp(event) {
+      const x = event.middlePoint.x;
+      const y = event.middlePoint.y;
+
+      if ((x >= 90 && x <= 810) && (y >= 90 && y <= 810)) {
+      // if (x < 90 || x > 810 || y < 90 || y > 810) { return }
+
+        }
+      }
       const stone = new Raster();
       stone.source = selectedPattern[mover];
+
 
       if (mover === 0) {
         stone.position = event.middlePoint;
@@ -45,8 +82,14 @@
         stone.height = 88;
         mover = 0;
       }
+        console.log(stone);
+      }
 
-      // const circle = new Path.Circle({
+
+
+
+
+        // const circle = new Path.Circle({
       //   center: event.middlePoint,
       //   radius: 44
       // });

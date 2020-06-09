@@ -44,37 +44,57 @@
     image.source = 'images/board-bg.png';
     image.position = view.center;
 
-    //test dots plotting
-    for(let i = 0; i < allCoords.length; i++) {
-      const coords = allCoords[i];
-      const circle = new Path.Circle({
-        center: new Point({ x:coords[0],y:coords[1] }),
-        radius: 44
-      });
-
-      circle.fillColor = '#d09929';
-
-    }
+    // //test dots plotting
+    // for(let i = 0; i < allCoords.length; i++) {
+    //   const coords = allCoords[i];
+    //   const circle = new Path.Circle({
+    //     center: new Point({ x:coords[0],y:coords[1] }),
+    //     radius: 44
+    //   });
+    //
+    //   circle.fillColor = '#d09929';
+    //
+    // }
 
     function onMouseDown(event) {
 
     }
 
     function onMouseUp(event) {
-      const x = event.middlePoint.x;
-      const y = event.middlePoint.y;
+      const mousex = event.middlePoint.x;
+      const mousey = event.middlePoint.y;
 
-      if ((x >= 90 && x <= 810) && (y >= 90 && y <= 810)) {
+      if ((mousex >= 90 && mousex <= 810) && (mousey >= 90 && mousey <= 810)) {
       // if (x < 90 || x > 810 || y < 90 || y > 810) { return }
+      const offset = 44;
+      let destination = undefined;
+
+      for(let i = 0; i < allCoords.length; i++) {
+        const coords = allCoords[i];
+        const distance = Math.hypot(mousex - coords[0], mousey - coords[1]); //coords[0],coords[1]คือค่าพิกัดจุดตัด
+        // a*a + b*b = c*c
+        // Math.sqrt(((mousex - coords[0])(mousex - coords[0])(mousey - coords[1])(mousey - coords[1])))
+        if (distance <= offset) {
+          destination = new Point({
+            x: coords[0],
+            y: coords[1]
+          });
+          break;
+        }
+      }
+
+      if (destination === undefined) {
+        return;
+      }
       const stone = new Raster();
       stone.source = selectedPattern[mover];
 
 
       if (mover === 0) {
-        stone.position = event.middlePoint;
+        stone.position = destination;
         mover = 1;
       } else if (mover === 1) {
-        stone.position = event.middlePoint;
+        stone.position = destination;
         stone.width = 88;
         stone.height = 88;
         mover = 0;

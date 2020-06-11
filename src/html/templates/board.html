@@ -30,6 +30,7 @@
 
     let allCoords = [];
     let placedCoords = [];
+    let playerIndices = [];
 
     for (let row = 1; row <= maxRow; row++) {
       for (let col = 1; col <= maxCol; col++) {
@@ -42,25 +43,25 @@
     console.log(allCoords);
   </script>
   <script type="text/paperscript" canvas="board-canvas">
-    let mover = 0;
+    let player = 0;
 
     const image = new Raster();
     image.source = 'images/board-bg.png';
     image.position = view.center;
 
     // test dots plotting
-    for(let i = 0; i < allCoords.length; i++) {
-      const coords = allCoords[i];
-      const circle = new Path.Circle({
-        center: new Point({
-          x: coords[0],
-          y: coords[1]
-        }),
-        radius: 10
-      });
-
-      circle.fillColor = '#ff0000aa';
-    }
+    // for(let i = 0; i < allCoords.length; i++) {
+    //   const coords = allCoords[i];
+    //   const circle = new Path.Circle({
+    //     center: new Point({
+    //       x: coords[0],
+    //       y: coords[1]
+    //     }),
+    //     radius: 10
+    //   });
+    //
+    //   circle.fillColor = '#ff0000aa';
+    // }
 
     function onMouseDown(event) {
 
@@ -71,11 +72,11 @@
       const y = event.middlePoint.y;
 
       console.log(event.middlePoint);
-      endGame();
 
       if (x < 90 || x > 810 || y < 90 || y > 810) { return }
 
       let destination = undefined;
+      let destinationIndex = -1;
 
       for (let i = 0; i < allCoords.length; i++) {
         const coords = allCoords[i];
@@ -86,7 +87,7 @@
             x: coords[0],
             y: coords[1]
           });
-
+          destinationIndex = i;
           break;
         }
       }
@@ -95,9 +96,8 @@
         return;
       }
 
-      console.log(placedCoords); // []
-
       let found = false;
+      let foundMover = 0;
       for (let i = 0; i < placedCoords.length; i++) {
         const point = placedCoords[i];
         if (destination.x === point.x && destination.y === point.y) {
@@ -108,21 +108,27 @@
 
       if (found) {
         return;
-      } else {
-        placedCoords.push(destination);
       }
 
-      const stone = new Raster();
-      stone.source = selectedPattern[mover];
+      if (checkRules(destinationIndex, destination) === false) {
+        return;
+      }
 
-      if (mover === 0) {
+      placedCoords.push(destination);
+      playerIndices.push(player);
+      console.log('current mover =>', player);
+
+      const stone = new Raster();
+      stone.source = selectedPattern[player];
+
+      if (player === 0) {
         stone.position = destination;
-        mover = 1;
-      } else if (mover === 1) {
+        player = 1;
+      } else if (player === 1) {
         stone.position = destination;
         stone.width = 88;
         stone.height = 88;
-        mover = 0;
+        player = 0;
       }
 
       // full board
@@ -132,9 +138,61 @@
       }
     }
 
+    function checkRules(index, position) {
+      return validateSuicideDot(index, position);
+    }
+
     function endGame() {
       console.log('end.');
       // tool.remove();
+    }
+
+    ///// RULES
+    function validateSuicideDot(index, position) {
+      const adjacentDots = [];
+
+      const leftIndex = index - 1;
+      const rightIndex = index + 1;
+      const topIndex = index - 9;
+      const bottomIndex = index + 9;
+
+      if (index % 9 > 0) {
+        const left = new Point({x: allCoords[leftIndex][0], y: allCoords[leftIndex][1]});
+        adjacentDots.push(left);
+      }
+
+      if (index % 9 < 8) {
+        const right = new Point({x: allCoords[rightIndex][0], y: allCoords[rightIndex][1]});
+        adjacentDots.push(right);
+      }
+
+      if (topIndex >= 0) {
+        const top = new Point({x: allCoords[topIndex][0], y: allCoords[topIndex][1]});
+        adjacentDots.push(top);
+      }
+
+      if (bottomIndex <= 80) {
+        const bottom = new Point({x: allCoords[bottomIndex][0], y: allCoords[bottomIndex][1]});
+        adjacentDots.push(bottom);
+      }
+
+      const enemy = player === 0 ? 1 : 0;
+
+      let score = 0;
+
+      for (let i = 0; i < placedCoords.length; i++) {
+        const placed = placedCoords[i];
+        const moverIndex = playerIndices[i];
+        for (let a = 0; a < adjacentDots.length; a++) {
+          const dot = adjacentDots[a];
+
+          if (placed.x === dot.x && placed.y === dot.y && moverIndex === enemy) {
+            score++;
+          }
+        }
+      }
+
+      return score < 3;
     }
   </script>
 </body>

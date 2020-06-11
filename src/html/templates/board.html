@@ -6,19 +6,113 @@
 <body>
   <section class="wrapper board">
     <main id="main-board">
-      <div class="game-assets">
-        <img id="bg-board" src="images/placeholder-640-square.jpg" alt="">
-      </div>
       <div class="game-bg"></div>
-      <canvas id="board-canvas"></canvas>
+      <canvas id="board-canvas" width="900" height="900"></canvas>
     </main>
   </section>
 
   <script src="js/vendor.js"></script>
+  <script>
+    const stonePatterns = [
+      ['images/move2.png', 'images/stone.png'],
+      ['images/move2.png', 'images/stone.png'],
+      ['images/move2.png', 'images/stone.png'],
+    ];
+
+    const selectedPattern = stonePatterns[1];
+
+    const maxRow = 9;
+    const maxCol = 9;
+
+    const size = 90;
+
+    let allCoords = [];
+
+    for (let row = 1; row <= 9; row++) {
+      for (let col = 1; col <= 9; col++) {
+        const a = row*size;
+        const b = col*size;
+        allCoords.push([b,a])
+      }
+    }
+    console.log(allCoords)
+  </script>
   <script type="text/paperscript" canvas="board-canvas">
+    let mover = 0;
+
     const image = new Raster();
-    image.source = 'images/placeholder-640-square.jpg';
+    image.source = 'images/board-bg.png';
     image.position = view.center;
+
+    // //test dots plotting
+    // for(let i = 0; i < allCoords.length; i++) {
+    //   const coords = allCoords[i];
+    //   const circle = new Path.Circle({
+    //     center: new Point({ x:coords[0],y:coords[1] }),
+    //     radius: 44
+    //   });
+    //
+    //   circle.fillColor = '#d09929';
+    //
+    // }
+
+    function onMouseDown(event) {
+
+    }
+
+    function onMouseUp(event) {
+      const mousex = event.middlePoint.x;
+      const mousey = event.middlePoint.y;
+
+      if ((mousex >= 90 && mousex <= 810) && (mousey >= 90 && mousey <= 810)) {
+      // if (x < 90 || x > 810 || y < 90 || y > 810) { return }
+      const offset = 44;
+      let destination = undefined;
+
+      for(let i = 0; i < allCoords.length; i++) {
+        const coords = allCoords[i];
+        const distance = Math.hypot(mousex - coords[0], mousey - coords[1]); //coords[0],coords[1]คือค่าพิกัดจุดตัด
+        // a*a + b*b = c*c
+        // Math.sqrt(((mousex - coords[0])(mousex - coords[0])(mousey - coords[1])(mousey - coords[1])))
+        if (distance <= offset) {
+          destination = new Point({
+            x: coords[0],
+            y: coords[1]
+          });
+          break;
+        }
+      }
+
+      if (destination === undefined) {
+        return;
+      }
+      const stone = new Raster();
+      stone.source = selectedPattern[mover];
+
+
+      if (mover === 0) {
+        stone.position = destination;
+        mover = 1;
+      } else if (mover === 1) {
+        stone.position = destination;
+        stone.width = 88;
+        stone.height = 88;
+        mover = 0;
+      }
+        console.log(stone);
+      }
+
+
+
+
+
+        // const circle = new Path.Circle({
+      //   center: event.middlePoint,
+      //   radius: 44
+      // });
+      //
+      // circle.fillColor = 'black';
+    }
   </script>
 </body>
 

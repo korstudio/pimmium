@@ -7,7 +7,7 @@
   <section class="wrapper board">
     <main id="main-board">
       <div class="game-bg"></div>
-      <canvas id="board-canvas" width="900" height="900"></canvas>
+      <canvas id="board-canvas" resize></canvas>
     </main>
   </section>
 
@@ -26,16 +26,20 @@
 
     const size = 90;
 
-    let allCoords = [];
+    const offset = 20;
 
-    for (let row = 1; row <= 9; row++) {
-      for (let col = 1; col <= 9; col++) {
-        const a = row*size;
-        const b = col*size;
-        allCoords.push([b,a])
+    let allCoords = [];
+    let placedCoords = [];
+
+    for (let row = 1; row <= maxRow; row++) {
+      for (let col = 1; col <= maxCol; col++) {
+        const x = col * size;
+        const y = row * size;
+        allCoords.push([x, y]);
       }
     }
-    console.log(allCoords)
+
+    console.log(allCoords);
   </script>
   <script type="text/paperscript" canvas="board-canvas">
     let mover = 0;
@@ -44,41 +48,45 @@
     image.source = 'images/board-bg.png';
     image.position = view.center;
 
-    // //test dots plotting
-    // for(let i = 0; i < allCoords.length; i++) {
-    //   const coords = allCoords[i];
-    //   const circle = new Path.Circle({
-    //     center: new Point({ x:coords[0],y:coords[1] }),
-    //     radius: 44
-    //   });
-    //
-    //   circle.fillColor = '#d09929';
-    //
-    // }
+    // test dots plotting
+    for(let i = 0; i < allCoords.length; i++) {
+      const coords = allCoords[i];
+      const circle = new Path.Circle({
+        center: new Point({
+          x: coords[0],
+          y: coords[1]
+        }),
+        radius: 10
+      });
+
+      circle.fillColor = '#ff0000aa';
+    }
 
     function onMouseDown(event) {
 
     }
 
     function onMouseUp(event) {
-      const mousex = event.middlePoint.x;
-      const mousey = event.middlePoint.y;
+      const x = event.middlePoint.x;
+      const y = event.middlePoint.y;
 
-      if ((mousex >= 90 && mousex <= 810) && (mousey >= 90 && mousey <= 810)) {
-      // if (x < 90 || x > 810 || y < 90 || y > 810) { return }
-      const offset = 44;
+      console.log(event.middlePoint);
+      endGame();
+
+      if (x < 90 || x > 810 || y < 90 || y > 810) { return }
+
       let destination = undefined;
 
-      for(let i = 0; i < allCoords.length; i++) {
+      for (let i = 0; i < allCoords.length; i++) {
         const coords = allCoords[i];
-        const distance = Math.hypot(mousex - coords[0], mousey - coords[1]); //coords[0],coords[1]คือค่าพิกัดจุดตัด
-        // a*a + b*b = c*c
-        // Math.sqrt(((mousex - coords[0])(mousex - coords[0])(mousey - coords[1])(mousey - coords[1])))
+        const distance = Math.hypot(x - coords[0], y - coords[1]);
+
         if (distance <= offset) {
           destination = new Point({
             x: coords[0],
             y: coords[1]
           });
+
           break;
         }
       }
@@ -86,9 +94,26 @@
       if (destination === undefined) {
         return;
       }
+
+      console.log(placedCoords); // []
+
+      let found = false;
+      for (let i = 0; i < placedCoords.length; i++) {
+        const point = placedCoords[i];
+        if (destination.x === point.x && destination.y === point.y) {
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        return;
+      } else {
+        placedCoords.push(destination);
+      }
+
       const stone = new Raster();
       stone.source = selectedPattern[mover];
-
 
       if (mover === 0) {
         stone.position = destination;
@@ -99,19 +124,17 @@
         stone.height = 88;
         mover = 0;
       }
-        console.log(stone);
+
+      // full board
+      if (placedCoords.length === allCoords.length) {
+        // full
+        endGame();
       }
+    }
 
-
-
-
-
-        // const circle = new Path.Circle({
-      //   center: event.middlePoint,
-      //   radius: 44
-      // });
-      //
-      // circle.fillColor = 'black';
+    function endGame() {
+      console.log('end.');
+      // tool.remove();
     }
   </script>
 </body>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOIN US</title>
+
+  <link media="all" rel="stylesheet" href="./css/vendor.css">
+  <link media="all" rel="stylesheet" href="./css/styles.css">
+  <!-- <link rel="stylesheet" href="assets/css/homepagestyle.css"> -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="scss/pages/main.scss">
+</head>
+<body>
+  <div class="overlay">
+    <div class="login">
+      <div class="header">
+        <h1>login
+          <i class="fas fa-times" onclick="toggleLogin()"> </i>
+        </h1>
+      </div>
+      <div class="body">
+        <form action="#" class="form">
+          <input type="email" placeholder="Email" /><br>
+          <input type="text" placeholder="Username" /><br>
+          <input type="password" placeholder="Password" /><br>
+        </form>
+      </div>
+      <div class="footer">
+        <button>Login</button>
+          <p href="#">Don't have an account?</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+  <script>
+    function toggleLogin(){
+      document.querySelector(".overlay").classList.toggle("open");
+    }
+  </script>
+</html>

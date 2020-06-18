@@ -16,7 +16,7 @@ module.exports = function (options) {
       minify: false,
       server: {
         baseDir: global.folder.dev,
-        // If index.html exist - open it, else show folder
+        // If aboutus.html exist - open it, else show folder
         directory: !fs.existsSync(`./${global.folder.dev}/${global.file.mainHtml}`),
       },
       snippetOptions: {

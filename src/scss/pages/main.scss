@@ -1,0 +1,64 @@
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Kanit', sans-serif;
+}
+
+.header {
+  width: 1440px;
+  height: 900px;
+  background-size: cover;
+  background: url("assets/images/backgroundaboutus.png") no-repeat center center;
+}
+
+.container {
+  width: 960;
+  margin: 0 auto;
+}
+
+.Group_Name {
+  width: 100%;
+  height: 220px;
+  background: #f1c232;
+  box-shadow: 0 0 10px #edb300;
+}
+
+.Group_Name_text {
+  padding-top: 65px;
+  margin: 0 auto;
+  width: 485px;
+  font-size: 120px;
+  font-weight: bold;
+  color: #ffff;
+}
+
+.Group_Name_text h1 {
+  text-align-all: center;
+  text-shadow: 0 10px 0 #6f633f;
+}
+
+.infoGroup1 {
+  width: 100%;
+  height: 413px;
+}
+
+.Mim_area {
+  color: #325a99;
+  text-align: center;
+  width: 125px;
+  float: right;
+  margin-right: 125px;
+  margin-top: 180px;
+}
+.Mim_area img {
+  float: right;
+  margin-top: 31px;
+  width: 350px;
+  height: 350px;
+}
+.Mim_area h1 {
+  margin: 0;
+}
+
+

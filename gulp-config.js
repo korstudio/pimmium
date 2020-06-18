@@ -25,7 +25,7 @@ module.exports = {
     temp: '.temp',
   },
   file: {
-    mainHtml: 'index.html',
+    mainHtml: 'aboutus.html',
     mainJs: 'app.js',
     mainJsMin: 'app.min.js',
     vendorJs: 'vendor.js',

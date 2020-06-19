@@ -4,5 +4,7 @@ module.exports = [
   './node_modules/jquery/dist/jquery.min.js',
   './node_modules/acorn/dist/acorn.js',
   './node_modules/paper/dist/paper-full.js',
-  './node_modules/bootstrap/dist/js/bootstrap.min.js'
+  './node_modules/bootstrap/dist/js/bootstrap.min.js',
+  './src/js/modules/jgoboard-latest.js',
+  './src/html/templates/large/board.js',
 ];

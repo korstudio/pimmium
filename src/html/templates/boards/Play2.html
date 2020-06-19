@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Board</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        div {
+            margin: 20px auto;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<div id="board"></div>
+
+
+<script type="text/javascript" src="dist/jgoboard-latest.js"></script>
+<script type="text/javascript" src="large/board.js"></script>
+<script type="text/javascript">
+    var jboard = new JGO.Board(9);
+    var jsetup = new JGO.Setup(jboard, JGO.BOARD.largeWalnut);
+    var player = JGO.WHITE; // next player
+    var ko = false, lastMove = false; // ko coordinate and last move coordinate
+    var lastHover = false, lastX = -1, lastY = -1; // hover helper vars
+
+    const pattern = getHandicapCoordinates(0);
+    jboard.setType(pattern.coords, JGO.BLACK);
+    console.log(jboard.width);
+
+    jsetup.setOptions({stars: {points: 5}});
+    jsetup.create('board', function (canvas) {
+        canvas.addListener('click', function (coord, ev) {
+            var opponent = (player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK;
+
+            if (ev.shiftKey) { // on shift do edit
+                if (jboard.getMark(coord) == JGO.MARK.NONE)
+                    jboard.setMark(coord, JGO.MARK.SELECTED);
+                else
+                    jboard.setMark(coord, JGO.MARK.NONE);
+
+                return;
+            }
+
+            // clear hover away - it'll be replaced or then it will be an illegal move
+            // in any case so no need to worry about putting it back afterwards
+            if (lastHover)
+                jboard.setType(new JGO.Coordinate(lastX, lastY), JGO.CLEAR);
+
+            lastHover = false;
+
+            var play = jboard.playMove(coord, player, ko);
+
+            if (play.success) {
+                jboard.setType(coord, player); // play stone
+                jboard.setType(play.captures, JGO.CLEAR); // clear opponent's stones
+
+                if (lastMove)
+                    jboard.setMark(lastMove, JGO.MARK.NONE); // clear previous mark
+                if (ko)
+                    jboard.setMark(ko, JGO.MARK.NONE); // clear previous ko mark
+
+                jboard.setMark(coord, JGO.MARK.CIRCLE); // mark move
+                lastMove = coord;
+
+                if (play.ko)
+                    jboard.setMark(play.ko, JGO.MARK.CIRCLE); // mark ko, too
+                ko = play.ko;
+
+                player = opponent;
+            } else alert('Illegal move: ' + play.errorMsg);
+        });
+
+        canvas.addListener('mousemove', function (coord, ev) {
+            if (coord.i == -1 || coord.j == -1 || (coord.i == lastX && coord.j == lastY))
+                return;
+
+            if (lastHover) // clear previous hover if there was one
+                jboard.setType(new JGO.Coordinate(lastX, lastY), JGO.CLEAR);
+
+            lastX = coord.i;
+            lastY = coord.j;
+
+            if (jboard.getType(coord) == JGO.CLEAR && jboard.getMark(coord) == JGO.MARK.NONE) {
+                jboard.setType(coord, player == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK);
+                lastHover = true;
+            } else
+                lastHover = false;
+        });
+
+        canvas.addListener('mouseout', function (ev) {
+            if (lastHover)
+                jboard.setType(new JGO.Coordinate(lastX, lastY), JGO.CLEAR);
+
+            lastHover = false;
+        });
+    });
+
+    function getHandicapCoordinates(patternId) {
+        const patterns = [
+            {
+                coords: [
+                    new JGO.Coordinate(3, 2),
+                    new JGO.Coordinate(4, 3),
+                    new JGO.Coordinate(5, 3),
+                    new JGO.Coordinate(2, 5),
+                ],
+                answer: new JGO.Coordinate(2, 2)
+            },
+            {
+                coords: [
+                    new JGO.Coordinate(2, 6),
+                    new JGO.Coordinate(0, 4)
+                ],
+                answer: new JGO.Coordinate(2, 3)
+            }
+        ];
+
+        return patterns[patternId] ? patterns[patternId] : [];
+    }
+
+    // const pattern = getHandicapCoordinates(1);
+    // pattern.coords
+    // pattern.answer
+</script>
+<a href="Play3.html">Go to next puzzle</a>
+<br>
+<a href="Play1.html">Go back to previous puzzle</a>
+<br>
+<br>
+<input type="button" value="Refresh Page" onClick="location.href=location.href">
+</body>
+</html>

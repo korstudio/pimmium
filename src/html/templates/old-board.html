@@ -132,6 +132,7 @@
       }
 
       //กินหมาก
+<<<<<<< HEAD:src/html/templates/board.html
       // 1. แบบเดี่ยว
       // for (let i = 0 ; i < allCoords.length; i++) {
       //   const coords = allCoords[i];
@@ -161,6 +162,50 @@
       //     destination[b] = space;
       //   }
       // }
+=======
+      //1. แบบเดี่ยว
+
+      // for (let i=0 ; i < allCoords.length; i++) {
+      //   const coords = allCoords[i];
+      //   const point = placedCoords[i];
+      //   let p = destination[i];
+      //   let space = coords-point;
+      // }
+
+      // const xx = destination[0];
+      // const yy = destination[1];
+      // console.log(destination);
+      //
+      // let breath =[];
+      //   const top = [xx, yy - 1];
+      //   const left = [xx - 1, yy];
+      //   const right = [xx + 1, yy];
+      //   const bottom = [xx, yy + 1];
+      //
+      //   for (let i=0 ; i<allCoords.length; i++) {
+      //     if ( top[1] >= 0 && left[0] >= 0) {
+      //       if (top !== placedCoords) {
+      //         breath.push(top);
+      //       }
+      //       if (left !== placedCoords) {
+      //         breath.push(left);
+      //       }
+      //       if (right !== placedCoords) {
+      //         breath.push(right);
+      //       }
+      //       if (bottom !== placedCoords) {
+      //         breath.push(bottom);
+      //       } else {
+      //         return;
+      //       }
+      //       console.log(breath.length);
+      //     }
+      //     if (breath.length === 0) {
+      //       destination[i] = delete ;
+      //     }
+      //   }
+
+>>>>>>> 898992adcca4bc97828f88aed4d65f534c93724f:src/html/templates/old-board.html
 
       // full board
       if (placedCoords.length === allCoords.length) {

@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jGoBoard SGF Player Demo</title>
+  <link rel="stylesheet" href="demoSGF.css" type="text/css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+<div id="main">
+
+<p class="controls">
+URL: <input id="url" type="text"> <button onclick="loadURL($('#url').val());">Load</button>
+File: <input id="file" type="file"> <button onclick="loadFile();">Load</button>
+</p>
+
+<div style="float: left; text-align: center">
+  <div id="board"></div>
+
+  <p class="controls" style="width: 300px;">
+  <a href="#" onclick="move(-2); return false;"><i class="fa fa-fast-backward"></i></a>
+  <a href="#" onclick="move(-1); return false;"><i class="fa fa-step-backward"></i></a>
+  Move: <strong id="move">1</strong>
+  <a href="#" onclick="move(1); return false;"><i class="fa fa-step-forward"></i></a>
+  <a href="#" onclick="move(2); return false;"><i class="fa fa-fast-forward"></i></a>
+  Variation: <strong id="variation">1</strong> / <strong id="variations"></strong>
+  <a href="#" onclick="move(10); return false;"><i title="variation" class="fa fa-arrows-v"></i></a>
+  </p>
+</div>
+
+<div style="float: left; padding: 1em; text-align: left;">
+  <h2>Game information</h2>
+  <p id="information"></p>
+  <p>
+  Black captures: <strong id="black_captures"></strong><br>
+  White captures: <strong id="white_captures"></strong>
+  </p>
+  <h2>Comments</h2>
+  <p id="comments"></p>
+</div>
+
+<div style="clear: both;"></div>
+
+<script type="text/javascript" src="dist/jgoboard-latest.js"></script>
+<script type="text/javascript" src="medium/board.js"></script>
+<script type="text/javascript">
+var moveNum = 1;
+var jrecord = false, jnotifier;
+
+function move(dir) {
+  if(!jrecord) return; // disable movement until SGF loaded
+
+  switch(dir) {
+    case -1:
+      if(jrecord.previous()) moveNum--;
+      break;
+    case 1:
+      if(jrecord.next()) moveNum++;
+      break;
+    case 2:
+      while(jrecord.next() != null) moveNum++;
+      break;
+    case -2:
+      jrecord.first();
+      moveNum = 1;
+      break;
+    case 10: // cycle variations
+      jrecord.setVariation((jrecord.getVariation() + 1) % jrecord.getVariations());
+      break;
+    default: // Do nothing
+  }
+
+  var info = jrecord.getCurrentNode().info;
+  $('#move').html(moveNum);
+  $('#comments').html(info.comment ? info.comment.replace(/\n/g, '<br>') : '');
+  $('#black_captures').html(info.captures[JGO.BLACK]);
+  $('#white_captures').html(info.captures[JGO.WHITE]);
+  $('#variation').html(jrecord.getVariation()+1);
+  $('#variations').html(jrecord.getVariations());
+}
+
+function updateGameInfo(info) {
+  var html = "";
+
+  if("black" in info) {
+    html += "Black: <strong>" + info.black;
+    if("blackRank" in info) html += ", " + info.blackRank;
+    html += "</strong><br />";
+  }
+
+  if("white" in info) {
+    html += "White: <strong>" + info.white;
+    if("whiteRank" in info) html += ", " + info.whiteRank;
+    html += "</strong><br />";
+  }
+
+  var additional = [["result", "Result"]];
+
+  $.each(additional, function(i, tup) {
+      if(tup[0] in info)
+      html += tup[1] + ": <strong>" + info[tup[0]] + "</strong><br>";
+      });
+
+  $('#information').html(html);
+}
+
+$(document).ready(function() {
+  $("body").keydown(function(e) { // left/right arrow navigation
+    if(e.keyCode == 37) move(-1);
+    else if(e.keyCode == 39) move(1);
+  });
+
+  var jboard = new JGO.Board(19, 19); // hardcoded size
+  var jsetup = new JGO.Setup(jboard, JGO.BOARD.medium);
+
+  // we can use this to change the board to listen to
+  notifier = jsetup.getNotifier();
+
+  jsetup.create('board', function(canvas) {
+    canvas.addListener('click', function(c) {
+      if(c.i < 10) move(-1); // back
+      if(c.i > 10) move(1); // forward
+    });
+  });
+});
+
+function loadSGF(sgf) {
+  jrecord = JGO.sgf.load(sgf, true);
+
+  if(!(jrecord instanceof JGO.Record)) {
+    alert('Empty SGF or multiple games in one SGF not supported!');
+    return;
+  }
+
+  notifier.changeBoard(jrecord.getBoard());
+  updateGameInfo(jrecord.getRootNode().info);
+  moveNum = 1;
+  move(0); // Will update move, comment and variation info
+}
+
+function loadURL(url) {
+  $.ajax('http://static.jgoboard.com/get_sgf.php', {
+    dataType: 'jsonp', data: {url: url}, complete: function(resp) {
+      loadSGF(resp.responseJSON);
+    }
+  });
+}
+
+function loadFile() {
+  var files = document.getElementById("file").files;
+	
+	if(!files || files.length == 0)
+		alert("File loading either not supported or no file selected!");
+		
+	var reader = new FileReader();
+	reader.onload = function() { loadSGF(reader.result); };
+	reader.readAsText(files[0], "UTF-8");
+}
+</script>
+
+</div>
+</body>
+</html>

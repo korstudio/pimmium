@@ -1,0 +1,38 @@
+body {
+    font-family: "Lucida Grande",Verdana,"Bitstream Vera Sans",Arial,sans-serif;
+    font-size: 12px;
+    color: #444;
+    width: 100%;
+    text-align: center;
+}
+
+#main {
+    width: 900px;
+    margin: 0 auto;
+}
+
+h2 {
+    font-weight: normal;
+}
+
+#comments {
+    border: 1px solid #ddd;
+    background-color: #fefefe;
+    width: 300px;
+    height: 250px;
+    overflow: auto;
+}
+
+.controls {
+    border: 1px solid #ddd;
+    background-color: #eee;
+    padding: 4px;
+    margin: 0 auto;
+    border-radius: 8px;
+    margin-bottom: 1em;
+}
+
+.controls a {
+    padding: 0 4px;
+    color: black;
+}

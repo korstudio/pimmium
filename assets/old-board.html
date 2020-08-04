@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Project Name]</title>
+  <link media="all" rel="stylesheet" href="../css/vendor.css">
+  <link media="all" rel="stylesheet" href="../css/styles.css">
+</head>
+
+
+<body>
+  <section class="wrapper board">
+    <main id="main-board">
+      <div class="game-bg"></div>
+      <canvas id="board-canvas" resize></canvas>
+    </main>
+  </section>
+
+  <script src="js/vendor.js"></script>
+  <script>
+    const stonePatterns = [
+      ['images/move2.png', 'images/stone.png'],
+      ['images/move2.png', 'images/stone.png'],
+      ['images/move2.png', 'images/stone.png'],
+    ];
+
+    const selectedPattern = stonePatterns[1];
+
+    const maxRow = 9;
+    const maxCol = 9;
+
+    const size = 90;
+
+    const offset = 20;
+
+    let allCoords = [];
+    let placedCoords = [];
+    let playerIndices = [];
+
+    for (let row = 1; row <= maxRow; row++) {
+      for (let col = 1; col <= maxCol; col++) {
+        const x = col * size;
+        const y = row * size;
+        allCoords.push([x, y]);
+      }
+    }
+
+    console.log(allCoords);
+  </script>
+  <script type="text/paperscript" canvas="board-canvas">
+    let player = 0;
+
+    const image = new Raster();
+    image.source = 'images/board-bg.png';
+    image.position = view.center;
+
+    // test dots plotting
+    // for(let i = 0; i < allCoords.length; i++) {
+    //   const coords = allCoords[i];
+    //   const circle = new Path.Circle({
+    //     center: new Point({
+    //       x: coords[0],
+    //       y: coords[1]
+    //     }),
+    //     radius: 10
+    //   });
+    //
+    //   circle.fillColor = '#ff0000aa';
+    // }
+
+    function onMouseDown(event) {
+
+    }
+
+    function onMouseUp(event) {
+      const x = event.middlePoint.x;
+      const y = event.middlePoint.y;
+
+      console.log(event.middlePoint);
+
+      if (x < 90 || x > 810 || y < 90 || y > 810) { return }
+
+      let destination = undefined;
+      let destinationIndex = -1;
+
+      for (let i = 0; i < allCoords.length; i++) {
+        const coords = allCoords[i];
+        const distance = Math.hypot(x - coords[0], y - coords[1]);
+
+        if (distance <= offset) {
+          destination = new Point({
+            x: coords[0],
+            y: coords[1]
+          });
+          destinationIndex = i;
+          break;
+        }
+      }
+
+      if (destination === undefined) {
+        return;
+      }
+
+      let found = false;
+      let foundMover = 0;
+      for (let i = 0; i < placedCoords.length; i++) {
+        const point = placedCoords[i];
+        if (destination.x === point.x && destination.y === point.y) {
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        return;
+      }
+
+      if (checkRules(destinationIndex, destination) === false) {
+        return;
+      }
+
+      placedCoords.push(destination);
+      playerIndices.push(player);
+      console.log('current mover =>', player);
+
+      const stone = new Raster();
+      stone.source = selectedPattern[player];
+
+      if (player === 0) {
+        stone.position = destination;
+        player = 1;
+      } else if (player === 1) {
+        stone.position = destination;
+        stone.width = 88;
+        stone.height = 88;
+        player = 0;
+      }
+
+      //กินหมาก
+      //1. แบบเดี่ยว
+
+      // for (let i=0 ; i < allCoords.length; i++) {
+      //   const coords = allCoords[i];
+      //   const point = placedCoords[i];
+      //   let p = destination[i];
+      //   let space = coords-point;
+      // }
+
+      // const xx = destination[0];
+      // const yy = destination[1];
+      // console.log(destination);
+      //
+      // let breath =[];
+      //   const top = [xx, yy - 1];
+      //   const left = [xx - 1, yy];
+      //   const right = [xx + 1, yy];
+      //   const bottom = [xx, yy + 1];
+      //
+      //   for (let i=0 ; i<allCoords.length; i++) {
+      //     if ( top[1] >= 0 && left[0] >= 0) {
+      //       if (top !== placedCoords) {
+      //         breath.push(top);
+      //       }
+      //       if (left !== placedCoords) {
+      //         breath.push(left);
+      //       }
+      //       if (right !== placedCoords) {
+      //         breath.push(right);
+      //       }
+      //       if (bottom !== placedCoords) {
+      //         breath.push(bottom);
+      //       } else {
+      //         return;
+      //       }
+      //       console.log(breath.length);
+      //     }
+      //     if (breath.length === 0) {
+      //       destination[i] = delete ;
+      //     }
+      //   }
+
+
+      // full board
+      if (placedCoords.length === allCoords.length) {
+        // full
+        endGame();
+      }
+    }
+
+    function checkRules(index, position) {
+      return validateSuicideDot(index, position);
+    }
+
+    function endGame() {
+      console.log('end.');
+      // tool.remove();
+    }
+
+    ///// RULES
+    function validateSuicideDot(index, position) {
+      const adjacentDots = [];
+
+      const leftIndex = index - 1;
+      const rightIndex = index + 1;
+      const topIndex = index - 9;
+      const bottomIndex = index + 9;
+
+      if (index % 9 > 0) {
+        const left = new Point({x: allCoords[leftIndex][0], y: allCoords[leftIndex][1]});
+        adjacentDots.push(left);  
+      }
+
+      if (index % 9 < 8) {
+        const right = new Point({x: allCoords[rightIndex][0], y: allCoords[rightIndex][1]});
+        adjacentDots.push(right);
+      }
+
+      if (topIndex >= 0) {
+        const top = new Point({x: allCoords[topIndex][0], y: allCoords[topIndex][1]});
+        adjacentDots.push(top);
+      }
+
+      if (bottomIndex <= 80) {
+        const bottom = new Point({x: allCoords[bottomIndex][0], y: allCoords[bottomIndex][1]});
+        adjacentDots.push(bottom);
+      }
+
+      const enemy = player === 0 ? 1 : 0;
+
+      let score = 0;
+
+      for (let i = 0; i < placedCoords.length; i++) {
+        const placed = placedCoords[i];
+        const moverIndex = playerIndices[i];
+        for (let a = 0; a < adjacentDots.length; a++) {
+          const dot = adjacentDots[a];
+
+          if (placed.x === dot.x && placed.y === dot.y && moverIndex === enemy) {
+            score++;
+          }
+        }
+      }
+
+      return score < 3;
+    }
+  </script>
+</body>
+
+</html>
